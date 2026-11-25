@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trắc Nghiệm Nuôi Tôm Công Nghệ Cao</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #f0f7fa;
+    color: #1e293b;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+h1 {
+    text-align: center;
+    color: #0284c7;
+}
+
+.subtitle {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+.question-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 5px solid #0284c7;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.question-title {
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label.option {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+label.option:hover {
+    background: #e0f2fe;
+    border-color: #38bdf8;
+}
+
+input[type="radio"] {
+    margin-right: 12px;
+    transform: scale(1.2);
+    accent-color: #0284c7;
+}
+
+.btn-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+button {
+    background: #0284c7;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0369a1;
+}
+
+button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+#result {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: none;
+}
+
+.correct {
+    background: #dcfce7 !important;
+    border-color: #22c55e !important;
+    color: #166534;
+}
+
+.incorrect {
+    background: #fee2e2 !important;
+    border-color: #ef4444 !important;
+    color: #991b1b;
+}
+
+@media(max-width:600px) {
+    .container { padding: 18px; }
+    h1 { font-size: 22px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Trắc Nghiệm: Nuôi Tôm Công Nghệ Cao</h1>
+
+<p class="subtitle">
+Hệ thống câu hỏi ôn tập theo nội dung bài thuyết trình
+</p>
+
+<form id="quizForm"></form>
+
+<div class="btn-container">
+<button type="button" id="submitBtn" onclick="submitQuiz()">
+Nộp bài &amp; Xem điểm
+</button>
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+// CHỈ 5 CÂU HỎI ĐẦU TIÊN
+
+const quizData = [
+
+{
+q: "Câu 1: Tại Đồng Tháp và Vĩnh Long, việc áp dụng công nghệ Biofloc vào nuôi tôm đã mang lại hiệu quả định lượng cụ thể nào?",
+options: [
+"Giảm 30% chi phí hóa chất và tăng 25% sản lượng",
+"Tiết kiệm 90% lượng nước và tăng 50% sản lượng",
+"Giảm 50% thức ăn và rút ngắn vụ nuôi còn 2 tháng",
+"Loại bỏ 100% dịch bệnh từ nền đất và giảm 40% nhân công"
+],
+answer: 0
+},
+
+{
+q: "Câu 2: Hệ thống nào đáp ứng tốt nhất yêu cầu tái sử dụng 90% nước khép kín, không xả thải ô nhiễm và tận dụng được đất cằn cỗi?",
+options: [
+"Hệ thống lọc tuần hoàn RAS",
+"Mô hình nuôi tôm quảng canh cải tiến",
+"Hệ thống sục khí đáy truyền thống",
+"Ao đất tự nhiên không lót bạt"
+],
+answer: 0
+},
+
+{
+q: "Câu 3: Việc áp dụng kỹ thuật lót bạt HDPE đáy ao tại Sóc Trăng và Trà Vinh giải quyết trực tiếp rủi ro nào trong quá trình nuôi tôm?",
+options: [
+"Mầm bệnh phát sinh từ nền đất và khó khăn khi vệ sinh ao",
+"Tác động trực tiếp của mưa bão và sốc nhiệt ngoài trời",
+"Thiếu hụt nguồn thức ăn tự nhiên từ tảo biển",
+"Chi phí đầu tư ban đầu quá lớn cho hệ thống nhà kính"
+],
+answer: 0
+},
+
+{
+q: "Câu 4: Tại sao mô hình nuôi tôm trong nhà tại Thái Bình và Hải Phòng giúp người nuôi chủ động được cả vụ nuôi?",
+options: [
+"Che chắn hoàn toàn để chống mưa bão, sốc nhiệt và động vật mang mầm bệnh",
+"Sử dụng hoàn toàn nguồn nước mưa tự nhiên quanh năm",
+"Không cần sử dụng hệ thống sục khí hay máy cho ăn tự động",
+"Tôm tự sinh sản trong nhà mà không cần nhập con giống"
+],
+answer: 0
+},
+
+{
+q: "Câu 5: Việc rút ngắn thời gian mỗi vụ nuôi tôm công nghệ cao xuống còn 3–3,5 tháng mang lại tác động trực tiếp nào đến chu kỳ sản xuất trong năm?",
+options: [
+"Tăng số vụ nuôi lên mức 2–3 vụ/năm",
+"Giảm số vụ nuôi xuống còn 1 vụ/năm để cải tạo ao",
+"Kéo dài thời gian thu hoạch lên 6 tháng/vụ",
+"Chỉ nuôi được vào mùa khô, nghỉ vào mùa mưa"
+],
+answer: 0
+}
+
+];
+
+const form = document.getElementById("quizForm");
+
+// HIỂN THỊ CÂU HỎI
+
+function renderQuiz() {
+
+    form.innerHTML = "";
+
+    quizData.forEach((item, index) => {
+
+        const card = document.createElement("div");
+        card.className = "question-card";
+
+        const title = document.createElement("div");
+        title.className = "question-title";
+        title.textContent = item.q;
+
+        card.appendChild(title);
+
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "options";
+
+        // Xáo trộn đáp án
+        const shuffled = item.options.map((text, i) => ({
+            text: text,
+            correct: i === item.answer
+        }));
+
+        shuffled.sort(() => Math.random() - 0.5);
+
+        shuffled.forEach((option, optIndex) => {
+
+            const label = document.createElement("label");
+            label.className = "option";
+            label.id = `label-${index}-${optIndex}`;
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = `question-${index}`;
+            radio.value = option.correct ? "1" : "0";
+
+            label.appendChild(radio);
+            label.appendChild(document.createTextNode(option.text));
+
+            optionsDiv.appendChild(label);
+
+        });
+
+        card.appendChild(optionsDiv);
+        form.appendChild(card);
+
+    });
+
+}
+
+// KIỂM TRA ĐÁP ÁN
+
+function submitQuiz() {
+
+    let score = 0;
+
+    quizData.forEach((item, index) => {
+
+        const radios = document.getElementsByName(
+            `question-${index}`
+        );
+
+        radios.forEach((radio, optIndex) => {
+
+            const label = document.getElementById(
+                `label-${index}-${optIndex}`
+            );
+
+            if (radio.value === "1") {
+                label.classList.add("correct");
+            }
+
+            if (radio.checked) {
+
+                if (radio.value === "1") {
+                    score++;
+                } else {
+                    label.classList.add("incorrect");
+                }
+
+            }
+
+        });
+
+    });
+
+    const result = document.getElementById("result");
+
+    result.style.display = "block";
+    result.style.background =
+        score >= 3 ? "#dcfce7" : "#fef3c7";
+
+    result.style.color = "#0f172a";
+
+    result.innerHTML =
+        `Bạn đã trả lời đúng ${score}/${quizData.length} câu!`;
+
+    // Khóa đáp án sau khi nộp
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.disabled = true;
+    });
+
+    document.getElementById("submitBtn").disabled = true;
+
+    result.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+
+// RESET BÀI LÀM
+
+function resetQuiz() {
+
+    renderQuiz();
+
+    const result = document.getElementById("result");
+    result.style.display = "none";
+    result.innerHTML = "";
+
+    document.getElementById("submitBtn").disabled = false;
+
+}
+
+// RESET KHI TẢI LẠI HOẶC QUAY LẠI TRANG
+
+window.addEventListener("pageshow", function() {
+    resetQuiz();
+});
+
+// RESET KHI RỜI TRANG
+
+window.addEventListener("pagehide", function() {
+    resetQuiz();
+});
+
+// KHỞI TẠO
+resetQuiz();
+
+</script>
+
+</body>
+</html>
